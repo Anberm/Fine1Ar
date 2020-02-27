@@ -16,7 +16,7 @@ namespace TranData
         {
             var data = e.Data;
             Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + data);
-            return;
+            //return;
             try
             {
                 switch (data)
