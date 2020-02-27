@@ -3,6 +3,7 @@ package com.fine1.ar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
     private DWebView dWebView;
 
     public final static String ApiIp ="192.168.0.73"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
-    public final static String VideoIp ="192.168.0.51"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
+    public final static String VideoIp ="192.168.0.51";//192.168.0.51"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
 
 
     @Override
@@ -46,17 +47,20 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         mTextViewZ = (TextView) findViewById(R.id.textViewGyroZ);
         textViewMotion = (TextView) findViewById(R.id.textViewMotion);
 
+        mTextViewX.setVisibility(View.INVISIBLE);
+        mTextViewY.setVisibility(View.INVISIBLE);
+        mTextViewZ.setVisibility(View.INVISIBLE);
+
         DWebView.setWebContentsDebuggingEnabled(true);
         dWebView = (DWebView) findViewById(R.id.webview);
-        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
+//        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
+        dWebView.loadUrl("http://192.168.0.100:8000/webrtcstreamer.html?video=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov&options=rtptransport=tcp&timeout=60&");
         mMotionDetector = new MotionDetector(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mImageIndex = 0;
-
         if (mMotionDetector != null) {
             mMotionDetector.startSensor();
         }
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         } else {
             // do nothing
         }
+        callWeb(direction);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         dWebView.callHandler("motionChange", new Object[]{direction,VideoIp}, new OnReturnValue<String>() {
             @Override
             public void onValue(String retValue) {
-                showToast(retValue);
+//                showToast(retValue);
             }
         });
     }

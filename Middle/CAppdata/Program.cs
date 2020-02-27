@@ -35,28 +35,17 @@ namespace TranData
             {
                 pro.Kill();
             }
-            InitUniSdk();
+            //InitUniSdk();
             string baseAddress = "http://+:16080/"; //绑定所有地址，外网可以用ip访问 需管理员权限
             //string baseAddress = $"http://{GetAddressIP()}:16080/"; //绑定所有地址，外网可以用ip访问 需管理员权限
             // 启动 OWIN host 
             WebApp.Start<Startup>(url: baseAddress);  // 这个是OK的
             InitRealTime();
+            StartRtc();
             Console.WriteLine(baseAddress);
             Console.WriteLine($"访问地址：{GetAddressIP()}");
             Console.ReadLine();
-            //var tcs = new TaskCompletionSource<object>();
-            //Console.CancelKeyPress += (sender, e) => tcs.TrySetResult(null);
-            //await tcs.Task;
 
-            ////foreach (System.Diagnostics.Process pro in System.Diagnostics.Process.GetProcessesByName("webrtc"))
-            ////{
-            ////    pro.Kill();
-            ////}
-            //Process.GetCurrentProcess().Close();
-            //foreach (System.Diagnostics.Process pro in System.Diagnostics.Process.GetProcessesByName("webrtc"))
-            //{
-            //    pro.Kill();
-            //}
         }
         private static string GetAddressIP()
         {
@@ -80,8 +69,6 @@ namespace TranData
                 Debug.WriteLine("it is not a admin oper");
             }
             var ptz = PTZControl.Instance;
-
-            //StartRtc();
         }
 
         private static void StartRtc()
@@ -91,8 +78,14 @@ namespace TranData
                 //调用自己的exe传递参数
                 Process proc = new Process();
                 var path = AppDomain.CurrentDomain.BaseDirectory;
-                proc.StartInfo.FileName = path + @"webrtc\webrtc.exe";
-                proc.StartInfo.Arguments = "rtsp://weathercam.gsis.edu.hk/axis-media/media.amp";
+                var flieName = path + @"webrtc\webrtc.exe";
+                var root = path + @"webrtc\html";
+
+                proc.StartInfo.CreateNoWindow = false;
+                proc.StartInfo.UseShellExecute = false;
+
+                proc.StartInfo.FileName = flieName;
+                proc.StartInfo.Arguments = $" -w {root} rtsp://weathercam.gsis.edu.hk/axis-media/media.amp";
                 proc.Start();
 
                 //Thread.Sleep(5000);//暂停3秒

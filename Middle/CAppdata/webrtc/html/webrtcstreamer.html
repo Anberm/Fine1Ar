@@ -1,136 +1,129 @@
 <html>
 
 <head>
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	<script src="libs/request.min.js"></script>
-	<script src="libs/adapter.min.js"></script>
-	<script src="webrtcstreamer.json"></script>
-	<script src="webrtcstreamer.js"></script>
-	<script src="dsbridge.js"> </script>
-	<script>
-		var websocket = null;
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="libs/request.min.js"></script>
+    <script src="libs/adapter.min.js"></script>
+    <script src="webrtcstreamer.json"></script>
+    <script src="webrtcstreamer.js"></script>
+    <script src="dsbridge.js"></script>
+    <script>
+        var websocket = null;
 
-		function doWebSocket() {
-			var url = "ws://192.168.0.73:16081/Ctrl"
-			websocket = new WebSocket(url);
+        function doWebSocket() {
+            //var url = "ws://192.168.0.73:16081/Ctrl"
+            var url = "ws://192.168.0.100:16081/Ctrl"
+            websocket = new WebSocket(url);
 
-			websocket.onopen = function (e) {
-				onOpen(e);
-			};
+            websocket.onopen = function (e) {
+                onOpen(e);
+            };
 
-			websocket.onmessage = function (e) {
-				onMessage(e);
-			};
+            websocket.onmessage = function (e) {
+                onMessage(e);
+            };
 
-			websocket.onerror = function (e) {
-				onError(e);
-			};
+            websocket.onerror = function (e) {
+                onError(e);
+            };
 
-			websocket.onclose = function (e) {
-				onClose(e);
-			};
-		}
+            websocket.onclose = function (e) {
+                onClose(e);
+            };
+        }
 
-		function onOpen(event) {
-			send("WebSocket rocks");
-		}
+        function onOpen(event) {
+            send("WebSocket rocks");
+        }
 
-		function onMessage(event) {
-			console.log('RESPONSE: ' + event.data);
-		}
+        function onMessage(event) {
+            console.log('RESPONSE: ' + event.data);
+        }
 
-		function onError(event) {
-			console.log('ERROR: ' + event.data);
-		}
+        function onError(event) {
+            console.log('ERROR: ' + event.data);
+        }
 
-		function onClose(event) {
-			console.log("DISCONNECTED");
-		}
+        function onClose(event) {
+            console.log("DISCONNECTED");
+        }
 
-		function send(message) {
-			console.log("SENT: " + message);
-			websocket.send(message);
-		}
-		doWebSocket();
-		var NON_SWING = -1; //{"PTZCmd":1283,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
-		var LEFT_SWING = 0; //{"PTZCmd":1284,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
-		var RIGHT_SWING = 1; //{"PTZCmd":1282,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
-		var UP_SWING = 2; //{"PTZCmd":1026,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
-		var DOWN_SWING = 3; //{"PTZCmd":1028,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
-		dsBridge.registerAsyn('motionChange', function (direction, videoIp, responseCallback) {
-			// var data = {
-			// 	"PTZCmd": 1283,
-			// 	"ContinueTime": 0,
-			// 	"Para1": 9,
-			// 	"Para2": 9,
-			// 	"Para3": 0
-			// };
-			if (direction == LEFT_SWING) {
-				// data.PTZCmd = 1284;
-				send('Left');
-			} else if (direction == RIGHT_SWING) {
-				// data.PTZCmd = 1282;
-				send('Right');
-			} else if (direction == UP_SWING) {
-				// data.PTZCmd = 1026;
-				send('Up');
-			} else if (direction == DOWN_SWING) {
-				// data.PTZCmd = 1028;
-				send('Down');
-			} else {
-				send('Stop');
-			}
-			// request('PUT', "http://admin:admin@" + videoIp + "/LAPI/V1.0/Channel/0/PTZ/PTZCtrl", data).done(
-			// 	function (response) {
-			// 		if (response.statusCode === 200) {
-			// 			onGetPeerConnectionList(JSON.parse(response.body))
-			// 		}
-			// 	});
-			send()
-			responseCallback(direction);
-		});
-		if (location.search.slice(1)) {
-			var url = {
-				video: location.search.slice(1)
-			};
-			var options = webrtcConfig.options;
-			if (typeof URLSearchParams != 'undefined') {
-				var params = new URLSearchParams(location.search);
-				if (params.has("video") || params.has("audio")) {
-					url = {
-						video: params.get("video"),
-						audio: params.get("audio")
-					};
-				}
-				if (params.has("options")) {
-					options = params.get("options");
-				}
-			}
-			window.onload = function () {
-				this.webRtcServer = new WebRtcStreamer("video", webrtcConfig.url);
-				document.getElementById("title").innerHTML = url.video;
-				webRtcServer.connect(url.video, url.audio, options);
+        function send(message) {
+            console.log("SENT: " + message);
+            websocket.send(message);
+        }
+        doWebSocket();
+        var NON_SWING = -1; //{"PTZCmd":1283,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
+        var LEFT_SWING = 0; //{"PTZCmd":1284,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
+        var RIGHT_SWING = 1; //{"PTZCmd":1282,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
+        var UP_SWING = 2; //{"PTZCmd":1026,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
+        var DOWN_SWING = 3; //{"PTZCmd":1028,"ContinueTime":0,"Para1":9,"Para2":9,"Para3":0}
+        dsBridge.registerAsyn('motionChange', function (direction, videoIp, responseCallback) {
+            // var data = {
+            // 	"PTZCmd": 1283,
+            // 	"ContinueTime": 0,
+            // 	"Para1": 9,
+            // 	"Para2": 9,
+            // 	"Para3": 0
+            // };
+            if (direction == LEFT_SWING) {
+                // data.PTZCmd = 1284;
+                send('Left');
+            } else if (direction == RIGHT_SWING) {
+                // data.PTZCmd = 1282;
+                send('Right');
+            } else if (direction == UP_SWING) {
+                // data.PTZCmd = 1026;
+                send('Up');
+            } else if (direction == DOWN_SWING) {
+                // data.PTZCmd = 1028;
+                send('Down');
+            } else {
+                send('Stop');
+            }
+            responseCallback("ok");
+        });
+        if (location.search.slice(1)) {
+            var url = {
+                video: location.search.slice(1)
+            };
+            var options = webrtcConfig.options;
+            if (typeof URLSearchParams != 'undefined') {
+                var params = new URLSearchParams(location.search);
+                if (params.has("video") || params.has("audio")) {
+                    url = {
+                        video: params.get("video"),
+                        audio: params.get("audio")
+                    };
+                }
+                if (params.has("options")) {
+                    options = params.get("options");
+                }
+            }
+            window.onload = function () {
+                this.webRtcServer = new WebRtcStreamer("video", webrtcConfig.url);
+                webRtcServer.connect(url.video, url.audio, options);
 
-			}
-			window.onbeforeunload = function () {
-				this.webRtcServer.disconnect()
-			}
-		} else {
-			if (typeof URLSearchParams != 'undefined') {
-				alert("WebRTC stream name to connect is missing\n\nUsage :" + window.location +
-					"?video=<WebRTC video stream name>&audio=<WebRTC audio stream name>&options=<WebRTC options>")
-			} else {
-				alert("WebRTC stream name to connect is missing\n\nUsage :" + window.location + "?<WebRTC video stream name>")
-			}
-		}
-	</script>
+            }
+            window.onbeforeunload = function () {
+                this.webRtcServer.disconnect()
+            }
+        } else {
+            if (typeof URLSearchParams != 'undefined') {
+                alert("WebRTC stream name to connect is missing\n\nUsage :" + window.location +
+                    "?video=<WebRTC video stream name>&audio=<WebRTC audio stream name>&options=<WebRTC options>")
+            } else {
+                alert("WebRTC stream name to connect is missing\n\nUsage :" + window.location + "?<WebRTC video stream name>")
+            }
+        }
+    </script>
 </head>
 
 <body>
-	<video id="video" muted></video>
-	<script>
+    <video id="video" muted style="width:100%"></video>
+    <script>
 
-	</script>
+    </script>
 </body>
 
 </html>
