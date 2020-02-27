@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
     private TextView mTextViewX;
     private TextView mTextViewY;
     private TextView mTextViewZ;
+    private TextView textViewLabelGyroX;
+    private TextView textViewLabelGyroY;
+    private TextView textViewLabelGyroZ;
+
     private  TextView textViewMotion;
     private DWebView dWebView;
 
@@ -45,11 +49,19 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         mTextViewX = (TextView) findViewById(R.id.textViewGyroX);
         mTextViewY = (TextView) findViewById(R.id.textViewGyroY);
         mTextViewZ = (TextView) findViewById(R.id.textViewGyroZ);
+
+        textViewLabelGyroX = (TextView) findViewById(R.id.textViewLabelGyroX);
+        textViewLabelGyroY = (TextView) findViewById(R.id.textViewLabelGyroY);
+        textViewLabelGyroZ = (TextView) findViewById(R.id.textViewLabelGyroZ);
         textViewMotion = (TextView) findViewById(R.id.textViewMotion);
 
         mTextViewX.setVisibility(View.INVISIBLE);
         mTextViewY.setVisibility(View.INVISIBLE);
         mTextViewZ.setVisibility(View.INVISIBLE);
+
+        textViewLabelGyroX.setVisibility(View.INVISIBLE);
+        textViewLabelGyroY.setVisibility(View.INVISIBLE);
+        textViewLabelGyroZ.setVisibility(View.INVISIBLE);
 
         DWebView.setWebContentsDebuggingEnabled(true);
         dWebView = (DWebView) findViewById(R.id.webview);
