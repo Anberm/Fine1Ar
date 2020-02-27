@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
     private  TextView textViewMotion;
     private DWebView dWebView;
 
-    public final static String ApiIp ="192.168.0.73"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
-    public final static String VideoIp ="192.168.0.51";//192.168.0.51"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
+    public final static String ApiIp ="192.168.168.125"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
+    public final static String VideoIp ="192.168.168.13";//192.168.0.51"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
 
 
     @Override
