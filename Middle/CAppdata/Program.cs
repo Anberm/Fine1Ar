@@ -20,6 +20,7 @@ using TranData.Driver;
 using System.Net;
 using WebSocketSharp.Server;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace TranData
 {
@@ -31,6 +32,7 @@ namespace TranData
             #region Timer
             Console.WriteLine(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "进入系统");
             #endregion
+            DisbleQuickEditMode();
             foreach (System.Diagnostics.Process pro in System.Diagnostics.Process.GetProcessesByName("webrtc"))
             {
                 pro.Kill();
@@ -117,6 +119,26 @@ namespace TranData
             }
 
         }
+
+        const int STD_INPUT_HANDLE = -10;
+        const uint ENABLE_QUICK_EDIT_MODE = 0x0040;
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern IntPtr GetStdHandle(int hConsoleHandle);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
+
+        public static void DisbleQuickEditMode()
+        {
+            IntPtr hStdin = GetStdHandle(STD_INPUT_HANDLE);
+            uint mode;
+            GetConsoleMode(hStdin, out mode);
+            mode &= ~ENABLE_QUICK_EDIT_MODE;
+            SetConsoleMode(hStdin, mode);
+
+        }
+
 
     }
 }

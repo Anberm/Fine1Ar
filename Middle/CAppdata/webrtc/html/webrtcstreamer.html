@@ -11,8 +11,8 @@
         var websocket = null;
 
         function doWebSocket() {
-            //var url = "ws://192.168.0.73:16081/Ctrl"
-            var url = "ws://192.168.0.100:16081/Ctrl"
+            var url = "ws://192.168.0.73:16081/Ctrl"
+            //var url = "ws://192.168.0.100:16081/Ctrl"
             websocket = new WebSocket(url);
 
             websocket.onopen = function (e) {
