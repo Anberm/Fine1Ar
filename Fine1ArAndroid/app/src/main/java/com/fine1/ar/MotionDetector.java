@@ -56,15 +56,9 @@ class MotionDetector implements SensorEventListener {
 
                 if (mIsEnable) {
                     int direction = judgeDirection(event.values);
-
-                    if ((direction == LEFT_SWING)
-                            || (direction == RIGHT_SWING)
-                            || (direction == UP_SWING)
-                            || (direction == DOWN_SWING)) {
                         mListener.onMotion(direction);
                         mIsEnable = false;
                         startIntervalTimer();
-                    }
                 }
             }
         }
@@ -101,14 +95,14 @@ class MotionDetector implements SensorEventListener {
     private int judgeDirection(float[] sensorValues) {
         int direction;
 
-        if (DETECTION_VALUE < sensorValues[0]) {
+        if (DETECTION_VALUE < sensorValues[1]) {
             direction = LEFT_SWING;
-        } else if (sensorValues[0] < (DETECTION_VALUE * -1)) {
+        } else if (sensorValues[1] < (DETECTION_VALUE * -1)) {
             direction = RIGHT_SWING;
-        } else if (sensorValues[1] > (DETECTION_VALUE )) {
-            direction = DOWN_SWING;
-        }else if (sensorValues[1] < (DETECTION_VALUE * -1)) {
+        } else if (sensorValues[0] > (DETECTION_VALUE )) {
             direction = UP_SWING;
+        }else if (sensorValues[0] < (DETECTION_VALUE * -1)) {
+            direction = DOWN_SWING;
         }else {
             direction = NON_SWING;
         }
