@@ -26,7 +26,7 @@ namespace TranData
     class Program
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             #region Timer
             Console.WriteLine(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "进入系统");
@@ -35,13 +35,13 @@ namespace TranData
             {
                 pro.Kill();
             }
-            //InitUniSdk();
+            InitUniSdk();
             string baseAddress = "http://+:16080/"; //绑定所有地址，外网可以用ip访问 需管理员权限
             //string baseAddress = $"http://{GetAddressIP()}:16080/"; //绑定所有地址，外网可以用ip访问 需管理员权限
             // 启动 OWIN host 
             WebApp.Start<Startup>(url: baseAddress);  // 这个是OK的
             InitRealTime();
-            StartRtc();
+            //StartRtc();
             Console.WriteLine(baseAddress);
             Console.WriteLine($"访问地址：{GetAddressIP()}");
             Console.ReadLine();
@@ -75,7 +75,6 @@ namespace TranData
         {
             try
             {
-                //调用自己的exe传递参数
                 Process proc = new Process();
                 var path = AppDomain.CurrentDomain.BaseDirectory;
                 var flieName = path + @"webrtc\webrtc.exe";

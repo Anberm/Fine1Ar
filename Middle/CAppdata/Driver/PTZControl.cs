@@ -125,19 +125,17 @@ namespace TranData.Driver
         {
             try
             {
-                //调用自己的exe传递参数
                 Process proc = new Process();
                 var path = AppDomain.CurrentDomain.BaseDirectory;
-                proc.StartInfo.FileName = path + @"webrtc\webrtc.exe";
-                proc.StartInfo.Arguments = VideoUrl;
+                var flieName = path + @"webrtc\webrtc.exe";
+                var root = path + @"webrtc\html";
+
+                proc.StartInfo.CreateNoWindow = false;
+                proc.StartInfo.UseShellExecute = false;
+
+                proc.StartInfo.FileName = flieName;
+                proc.StartInfo.Arguments = $" -w {root} {VideoUrl}";
                 proc.Start();
-
-                //Thread.Sleep(5000);//暂停3秒
-
-                //foreach (System.Diagnostics.Process pro in System.Diagnostics.Process.GetProcessesByName("webrtc"))
-                //{
-                //    pro.Kill();
-                //}
             }
             catch (Exception ex)
             {
