@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
 
         } else {
             // do nothing
+             textViewMotion.setText("STOP");
         }
         callWeb(direction);
     }
