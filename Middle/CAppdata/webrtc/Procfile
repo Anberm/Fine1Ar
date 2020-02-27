@@ -1,0 +1,4 @@
+#
+# configure application to run on Heroku
+#
+web: ./webrtc -a -C config.json

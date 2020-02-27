@@ -1,0 +1,80 @@
+import "./libs/request.min.js";
+import "./libs/adapter.min.js";
+import "./webrtcstreamer.js";
+
+class WebRTCStreamerElement extends HTMLElement {
+	static get observedAttributes() {
+		return ['url', 'options', 'webrtcurl', 'notitle', 'width', 'height'];
+	}  
+	
+	constructor() {
+		super(); 
+		this.shadowDOM = this.attachShadow({mode: 'open'});
+		this.shadowDOM.innerHTML = `
+					<style>@import "styles.css"</style>
+					<h2 id="title"></h2>
+					<video id="video" muted></video>
+					`;
+		this.initialized = false;
+		this.titleElement = this.shadowDOM.getElementById("title");
+		this.videoElement = this.shadowDOM.getElementById("video");
+	}
+	connectedCallback() {
+		this.connectStream();
+		this.initialized = true;
+	}
+	disconnectedCallback() {
+		this.disconnectStream();
+		this.initialized = false;
+	}
+	attributeChangedCallback(attrName, oldVal, newVal) {
+		if (attrName === "notitle") {
+			this.titleElement.style.visibility = "hidden";
+		} else if (attrName === "width") {
+			this.videoElement.style.width = newVal;
+		} else if (attrName === "height") {
+			this.videoElement.style.height = newVal;
+		} if (this.initialized) {
+			this.connectStream();
+		}
+	}
+	
+	disconnectStream() {
+		if (this.webRtcServer) {
+			this.webRtcServer.disconnect();
+			this.webRtcServer = null;
+		}
+	}
+	connectStream() {
+		this.disconnectStream();
+		
+		const webrtcurl = this.getAttribute("webrtcurl");
+
+		let videostream;
+		let audiostream;
+
+		const url = this.getAttribute("url");
+		if (url) {
+			try {
+				let urljson = JSON.parse(url);
+				videostream = urljson.video;
+				audiostream = urljson.audio;
+			} catch (e) {
+				videostream = url;
+			}
+			
+			const options = this.getAttribute("options");
+			
+			const notitle = this.getAttribute("notitle");
+			if (notitle === null) {
+				this.titleElement.innerHTML = videostream; 
+			}
+			this.videoElement.title = videostream;
+
+			this.webRtcServer = new WebRtcStreamer(this.videoElement, webrtcurl);
+			this.webRtcServer.connect(videostream, audiostream, options);
+		}
+	}	
+}
+
+customElements.define('webrtc-streamer', WebRTCStreamerElement);
