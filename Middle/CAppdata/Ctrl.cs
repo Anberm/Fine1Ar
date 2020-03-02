@@ -21,16 +21,17 @@ namespace TranData
             {
                 switch (data)
                 {
-                    case "Up":
+                    case "Down":
                         TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
                         break;
-                    case "Right":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
-                        break;
-                    case "Down":
+                    case "Up":
                         TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
                         break;
                     case "Left":
+                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
+                        break;                
+                
+                    case "Right":
                         TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
                         break;
                     case "ZoomIn":
