@@ -17,6 +17,9 @@ namespace TranData.Driver
         private static PTZControl _instance;
         public static DeviceInfo DeviceInfo;
         public static TreeNodeInfo TreeNodeInfo = new TreeNodeInfo();
+
+       private string szPresetName = "原点";
+       private int lPresetID = 1;
         public string VideoUrl
         {
             get
@@ -457,12 +460,20 @@ namespace TranData.Driver
 
         public void SetPreset()
         {
-            string szPresetName = "原点";
-            int lPresetID = 1;
+    
             byte[] byPresetName;
             GetUTF8Buffer(szPresetName, NETDEVSDK.NETDEV_LEN_32, out byPresetName);
             int dwChannelID = PTZControl.TreeNodeInfo.dwChannelID;
             int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(CurrentHandle, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_SET_PRESET, byPresetName, lPresetID);
+        }
+
+        public void GotoPreset()
+        {
+
+            byte[] byPresetName;
+            GetUTF8Buffer(szPresetName, NETDEVSDK.NETDEV_LEN_32, out byPresetName);
+            int dwChannelID = PTZControl.TreeNodeInfo.dwChannelID;
+            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(CurrentHandle, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_GOTO_PRESET, byPresetName, lPresetID);
         }
     }
 

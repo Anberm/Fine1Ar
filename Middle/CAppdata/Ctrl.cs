@@ -46,6 +46,10 @@ namespace TranData
                     case "Stop":
                         TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
                         break;
+
+                    case "Origin":
+                        TranData.Driver.PTZControl.Instance.GotoPreset();
+                        break;
                     default:
                         Console.WriteLine($"msg:{data}");
                         break;
