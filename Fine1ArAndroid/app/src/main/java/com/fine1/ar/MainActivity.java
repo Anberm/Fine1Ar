@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
     private TextView textViewLabelGyroZ;
 
     private  TextView textViewMotion;
+    private  TextView textView;
     private DWebView dWebView;
 
     public final static String ApiIp ="192.168.168.125"; //"http://admin:admin@192.168.0.51/LAPI/V1.0/Channel/0/PTZ/PTZCtrl";
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         textViewLabelGyroY = (TextView) findViewById(R.id.textViewLabelGyroY);
         textViewLabelGyroZ = (TextView) findViewById(R.id.textViewLabelGyroZ);
         textViewMotion = (TextView) findViewById(R.id.textViewMotion);
+        textView = (TextView) findViewById(R.id.textView);
 
         mTextViewX.setVisibility(View.INVISIBLE);
         mTextViewY.setVisibility(View.INVISIBLE);
@@ -65,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
 
         DWebView.setWebContentsDebuggingEnabled(true);
         dWebView = (DWebView) findViewById(R.id.webview);
-        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
-//        dWebView.loadUrl("http://192.168.0.100:8000/webrtcstreamer.html?video=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov&options=rtptransport=tcp&timeout=60&");
+//        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
+        dWebView.loadUrl("http://192.168.1.102:8000/webrtcstreamer.html?video=rtsp://admin:admin@192.168.0.51/media/video1&options=rtptransport=tcp&timeout=60&");
         mMotionDetector = new MotionDetector(this);
     }
 
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
 
     @Override
     public void onShake() {
+        textView.setText("回到原点");
         callWebShake();
     }
 
@@ -132,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         dWebView.callHandler("onShake", new Object[]{"shake",VideoIp}, new OnReturnValue<String>() {
             @Override
             public void onValue(String retValue) {
+                textView.setText("");
 //                showToast(retValue);
             }
         });

@@ -6,17 +6,20 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.nfc.Tag;
 import android.os.Handler;
+import android.util.Log;
 
 class MotionDetector implements SensorEventListener {
 
+    private  static  final  String TAG="MotionDetector";
     static final int NON_SWING = -1;
     static final int LEFT_SWING = 0;
     static final int RIGHT_SWING = 1;
     static final int UP_SWING = 2;
     static final int DOWN_SWING = 3;
 
-    private static final int DETECTION_INTERVAL = 200;     // 1000 ms
+    private static final int DETECTION_INTERVAL = 50;     // 1000 ms
     private static final float DETECTION_VALUE = 0.3f;      // 1.7 rad/s
 
 
@@ -29,7 +32,7 @@ class MotionDetector implements SensorEventListener {
     private final Handler mHandler;
 
     // 速度阈值，当摇晃速度达到这值后产生作用
-    private static final int SPEED_SHRESHOLD = 5000;
+    private static final int SPEED_SHRESHOLD = 700;
     // 两次检测的时间间隔
     private static final int UPTATE_INTERVAL_TIME = 50;
     private float lastX;
@@ -94,7 +97,9 @@ class MotionDetector implements SensorEventListener {
                         * deltaZ)
                         / timeInterval * 10000;
                 // 达到速度阀值，发出提示
+
                 if (speed >= SPEED_SHRESHOLD) {
+                    Log.d(TAG,"速度："+speed);
                     mListener.onShake();
                 }
 
@@ -112,7 +117,7 @@ class MotionDetector implements SensorEventListener {
             if (mSensorManager != null) {
                 Sensor gyro = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
                 if (gyro != null) {
-                    mIsStartSensor = mSensorManager.registerListener(this, gyro, SensorManager.SENSOR_DELAY_FASTEST);
+                    mIsStartSensor = mSensorManager.registerListener(this, gyro, SensorManager.SENSOR_DELAY_NORMAL);
                 }
             }
             if (mIsStartSensor) {
