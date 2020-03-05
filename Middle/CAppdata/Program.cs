@@ -71,6 +71,7 @@ namespace TranData
                 Debug.WriteLine("it is not a admin oper");
             }
             var ptz = PTZControl.Instance;
+            ptz.SetPreset();
         }
 
         private static void StartRtc()

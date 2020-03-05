@@ -387,13 +387,6 @@ namespace TranData.Driver
 
         }
 
-
-
-
-
-
-
-
         public void SetPTZSpeed(int speed)
         {
             this.m_speed = speed;
@@ -452,6 +445,25 @@ namespace TranData.Driver
             return true;
         }
 
+        public void GetUTF8Buffer(string inputString, int bufferLen, out byte[] utf8Buffer)
+        {
+            utf8Buffer = new byte[bufferLen];
+            byte[] tempBuffer = System.Text.Encoding.UTF8.GetBytes(inputString);
+            for (int i = 0; i < tempBuffer.Length; ++i)
+            {
+                utf8Buffer[i] = tempBuffer[i];
+            }
+        }
+
+        public void SetPreset()
+        {
+            string szPresetName = "原点";
+            int lPresetID = 1;
+            byte[] byPresetName;
+            GetUTF8Buffer(szPresetName, NETDEVSDK.NETDEV_LEN_32, out byPresetName);
+            int dwChannelID = PTZControl.TreeNodeInfo.dwChannelID;
+            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(CurrentHandle, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_SET_PRESET, byPresetName, lPresetID);
+        }
     }
 
     public class TreeNodeInfo
