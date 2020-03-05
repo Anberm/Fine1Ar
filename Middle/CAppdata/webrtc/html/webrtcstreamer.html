@@ -83,6 +83,10 @@
             }
             responseCallback("ok");
         });
+        dsBridge.registerAsyn('onShake', function (shake, videoIp, responseCallback) {
+            send('Origin');
+            responseCallback("ok");
+        });
         if (location.search.slice(1)) {
             var url = {
                 video: location.search.slice(1)

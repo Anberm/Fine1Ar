@@ -115,8 +115,21 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         mTextViewZ.setText(String.valueOf(gz));
     }
 
+    @Override
+    public void onShake() {
+        callWebShake();
+    }
+
     private  void callWeb(int direction){
         dWebView.callHandler("motionChange", new Object[]{direction,VideoIp}, new OnReturnValue<String>() {
+            @Override
+            public void onValue(String retValue) {
+//                showToast(retValue);
+            }
+        });
+    }
+    private  void callWebShake(){
+        dWebView.callHandler("onShake", new Object[]{"shake",VideoIp}, new OnReturnValue<String>() {
             @Override
             public void onValue(String retValue) {
 //                showToast(retValue);

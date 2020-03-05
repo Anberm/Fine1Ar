@@ -28,11 +28,22 @@ class MotionDetector implements SensorEventListener {
 
     private final Handler mHandler;
 
+    // 速度阈值，当摇晃速度达到这值后产生作用
+    private static final int SPEED_SHRESHOLD = 5000;
+    // 两次检测的时间间隔
+    private static final int UPTATE_INTERVAL_TIME = 50;
+    private float lastX;
+    private float lastY;
+    private float lastZ;
+    private long lastUpdateTime;
+
 
     interface IMotionDetectListener {
         void onMotion(int direction);
 
         void onChanged(float gx, float gy, float gz);
+
+        void onShake();
     }
 
     MotionDetector(Context context) {
@@ -52,14 +63,41 @@ class MotionDetector implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             if (mListener != null) {
-                mListener.onChanged(event.values[0], event.values[1], event.values[2]);
-
                 if (mIsEnable) {
                     int direction = judgeDirection(event.values);
-                        mListener.onMotion(direction);
-                        mIsEnable = false;
-                        startIntervalTimer();
+                    mListener.onMotion(direction);
+                    mIsEnable = false;
+                    startIntervalTimer();
                 }
+                mListener.onChanged(event.values[0], event.values[1], event.values[2]);
+                // 现在检测时间
+                long currentUpdateTime = System.currentTimeMillis();
+                // 两次检测的时间间隔
+                long timeInterval = currentUpdateTime - lastUpdateTime;
+                // 判断是否达到了检测时间间隔
+                if (timeInterval < UPTATE_INTERVAL_TIME) return;
+                // 现在的时间变成last时间
+                lastUpdateTime = currentUpdateTime;
+                // 获得x,y,z坐标
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+                // 获得x,y,z的变化值
+                float deltaX = x - lastX;
+                float deltaY = y - lastY;
+                float deltaZ = z - lastZ;
+                // 将现在的坐标变成last坐标
+                lastX = x;
+                lastY = y;
+                lastZ = z;
+                double speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ
+                        * deltaZ)
+                        / timeInterval * 10000;
+                // 达到速度阀值，发出提示
+                if (speed >= SPEED_SHRESHOLD) {
+                    mListener.onShake();
+                }
+
             }
         }
     }
