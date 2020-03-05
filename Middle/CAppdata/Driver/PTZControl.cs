@@ -15,11 +15,12 @@ namespace TranData.Driver
     public class PTZControl
     {
         private static PTZControl _instance;
-        public static DeviceInfo DeviceInfo;
-        public static TreeNodeInfo TreeNodeInfo = new TreeNodeInfo();
+        public DeviceInfo DeviceInfo;
+        public TreeNodeInfo TreeNodeInfo = new TreeNodeInfo();
+        public IntPtr lpUserID = IntPtr.Zero;
 
-       private string szPresetName = "原点";
-       private int lPresetID = 1;
+        private string szPresetName = "原点";
+        private int lPresetID = 1;
         public string VideoUrl
         {
             get
@@ -43,7 +44,7 @@ namespace TranData.Driver
                 return _instance;
             }
         }
-        int m_speed = 8;
+        int m_speed = 9;
         IntPtr CurrentHandle = IntPtr.Zero;
 
         private List<NETDEV_DISCOVERY_DEVINFO_S> oDeviceInfoList = new List<NETDEV_DISCOVERY_DEVINFO_S>();
@@ -119,6 +120,7 @@ namespace TranData.Driver
                     DevLogin(deviceInfoTemp);
                     DeviceInfo = deviceInfoTemp;
                     StartRtc();
+                    SetPreset();
                 }
 
             }
@@ -180,6 +182,7 @@ namespace TranData.Driver
                 Debug.WriteLine(devInfo.m_ip + " : " + devInfo.m_port, "login", NETDEVSDK.NETDEV_GetLastError());
                 return;
             }
+            lpUserID = lpDevHandle;
             if (loginFlag == NETDEMO.NETDEV_LOGIN_TYPE_E.NETDEV_AGAIN_LOGIN)
             {
                 devInfo.m_lpDevHandle = lpDevHandle;
@@ -385,6 +388,7 @@ namespace TranData.Driver
                 NETDEV_DEVICE_INFO_S pstDevInfo = new NETDEV_DEVICE_INFO_S();
                 NETDEVSDK.NETDEV_GetDeviceInfo(deviceInfoTemp.m_lpDevHandle, ref pstDevInfo);
                 deviceInfoTemp.m_stDevInfo = pstDevInfo;
+                            
             }
 
 
@@ -460,11 +464,15 @@ namespace TranData.Driver
 
         public void SetPreset()
         {
-    
+
             byte[] byPresetName;
             GetUTF8Buffer(szPresetName, NETDEVSDK.NETDEV_LEN_32, out byPresetName);
-            int dwChannelID = PTZControl.TreeNodeInfo.dwChannelID;
-            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(CurrentHandle, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_SET_PRESET, byPresetName, lPresetID);
+            int dwChannelID = PTZControl.Instance.TreeNodeInfo.dwChannelID;
+            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(Instance.lpUserID, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_SET_PRESET, byPresetName, lPresetID);
+            if (NETDEVSDK.TRUE != bRet)
+            {
+                var err = NETDEVSDK.NETDEV_GetLastError();
+            }
         }
 
         public void GotoPreset()
@@ -472,8 +480,8 @@ namespace TranData.Driver
 
             byte[] byPresetName;
             GetUTF8Buffer(szPresetName, NETDEVSDK.NETDEV_LEN_32, out byPresetName);
-            int dwChannelID = PTZControl.TreeNodeInfo.dwChannelID;
-            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(CurrentHandle, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_GOTO_PRESET, byPresetName, lPresetID);
+            int dwChannelID = PTZControl.Instance.TreeNodeInfo.dwChannelID;
+            int bRet = NETDEVSDK.NETDEV_PTZPreset_Other(Instance.lpUserID, dwChannelID, (int)NETDEV_PTZ_PRESETCMD_E.NETDEV_PTZ_GOTO_PRESET, byPresetName, lPresetID);
         }
     }
 
