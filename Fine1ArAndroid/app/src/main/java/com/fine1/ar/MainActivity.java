@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
 
         DWebView.setWebContentsDebuggingEnabled(true);
         dWebView = (DWebView) findViewById(R.id.webview);
-//        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
-        dWebView.loadUrl("http://192.168.1.102:8000/webrtcstreamer.html?video=rtsp://admin:admin@192.168.0.51/media/video1&options=rtptransport=tcp&timeout=60&");
+        dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
+//        dWebView.loadUrl("http://192.168.1.102:8000/webrtcstreamer.html?video=rtsp://admin:admin@192.168.0.51/media/video1&options=rtptransport=tcp&timeout=60&");
         mMotionDetector = new MotionDetector(this);
     }
 
