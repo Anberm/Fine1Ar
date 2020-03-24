@@ -1,5 +1,6 @@
 ﻿using NETSDKHelper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,11 +54,28 @@ namespace TranData
                         break;
                     default:
                         Console.WriteLine($"msg:{data}");
-                       var d= JsonConvert.DeserializeObject<Angle>(data);
-                        if(d.Type== "Angle")
+     
+                        if ((data.StartsWith("{") && data.EndsWith("}")) || //For object
+                            (data.StartsWith("[") && data.EndsWith("]"))) //For array
                         {
-                            TranData.Driver.PTZControl.Instance.Enqueue(d.X, d.Y, d.Z);
-                        }
+                            try
+                            {
+                                var d = JsonConvert.DeserializeObject<Angle>(data);
+                                if (d.Type == "Angle")
+                                {
+                                    TranData.Driver.PTZControl.Instance.Enqueue(d.X, d.Y, d.Z);
+                                }
+                            }
+                            catch (JsonReaderException jex)
+                            {
+                                //Exception in parsing json
+                                Console.WriteLine(jex.Message);
+                            }
+                            catch (Exception ex) //some other exception
+                            {
+                                Console.WriteLine(ex.ToString());
+                            }
+                        }                     
                   
                         break;
                 }
@@ -68,6 +86,34 @@ namespace TranData
                 throw;
             }
           
+        }
+        private static bool IsValidJson(string strInput)
+        {
+            strInput = strInput.Trim();
+            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
+                (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+            {
+                try
+                {
+                    var obj = JToken.Parse(strInput);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    //Exception in parsing json
+                    Console.WriteLine(jex.Message);
+                    return false;
+                }
+                catch (Exception ex) //some other exception
+                {
+                    Console.WriteLine(ex.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
     public class Angle
