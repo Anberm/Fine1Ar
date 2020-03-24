@@ -465,6 +465,7 @@ namespace TranData.Driver
             if (diff >= 0)
             {//向右
                 int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+                Console.WriteLine($"向右 {s * 100}ms  {diff}");
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
                 await Task.Delay(s * 100);
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
@@ -473,6 +474,7 @@ namespace TranData.Driver
             {
                 //向左
                 int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+                Console.WriteLine($"向左 {s * 100}ms  {diff}");
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
                 await Task.Delay(s * 100);
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
@@ -485,6 +487,7 @@ namespace TranData.Driver
             if (diff >= 0)
             {//向上
                 int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+                Console.WriteLine($"向上 {s * 100}ms  {diff}");
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
                 await Task.Delay(s * 100);
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
@@ -493,6 +496,7 @@ namespace TranData.Driver
             {
                 //向下
                 int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+                Console.WriteLine($"向下 {s * 100}ms  {diff}");
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
                 await Task.Delay(s * 100);
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
