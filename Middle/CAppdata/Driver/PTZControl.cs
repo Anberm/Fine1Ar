@@ -416,7 +416,12 @@ namespace TranData.Driver
 
         public void Enqueue(float x, float y, float z)
         {
-            Queue.Enqueue(new float[3] { x, y, z });
+            var xyz = new float[3] { x, y, z }; 
+            if (lastXYZ == null)
+            {
+                lastXYZ = xyz;
+            }
+            Queue.Enqueue(xyz);
         }
 
         private async Task StartQueue()
@@ -444,7 +449,7 @@ namespace TranData.Driver
 
         private float xSpeed = 6.7F;//100ms转动角度
         private float ySpeed = 3.91F;//100ms转动角度
-        private float[] lastXYZ = new float[3];
+        private float[] lastXYZ;
         public async Task GoToXYZ(float x, float y, float z)
         {
             await GoToX(x);
