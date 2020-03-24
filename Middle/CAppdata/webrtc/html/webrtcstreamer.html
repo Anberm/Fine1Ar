@@ -83,6 +83,10 @@
             }
             responseCallback("ok");
         });
+        dsBridge.registerAsyn('angleChange', function (x,y,z, responseCallback) {
+            send(x,y,z);
+            responseCallback("ok");
+        });
         dsBridge.registerAsyn('onShake', function (shake, videoIp, responseCallback) {
             send('Origin');
             setTimeout(() => {

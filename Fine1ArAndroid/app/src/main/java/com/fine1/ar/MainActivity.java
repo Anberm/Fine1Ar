@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
         DWebView.setWebContentsDebuggingEnabled(true);
         dWebView = (DWebView) findViewById(R.id.webview);
         dWebView.loadUrl("http://"+ApiIp+":8000/webrtcstreamer.html?video=rtsp://admin:admin@"+VideoIp+"/media/video1&options=rtptransport=tcp&timeout=60&");
-//        dWebView.loadUrl("http://192.168.1.102:8000/webrtcstreamer.html?video=rtsp://admin:admin@192.168.0.51/media/video1&options=rtptransport=tcp&timeout=60&");
+        dWebView.loadUrl("http://172.39.17.128:8000/webrtcstreamer.html?video=rtsp://admin:admin@192.168.0.51/media/video1&options=rtptransport=tcp&timeout=60&");
         mMotionDetector = new MotionDetector(this);
     }
 
@@ -118,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
     }
 
     @Override
+    public void onAngleChanged(double gx, double gy, double gz) {
+        callWebXYZ(gx,gy,gz);
+    }
+
+    @Override
     public void onShake() {
         textView.setText("回到原点");
         callWebShake();
@@ -125,6 +130,15 @@ public class MainActivity extends AppCompatActivity implements MotionDetector.IM
 
     private  void callWeb(int direction){
         dWebView.callHandler("motionChange", new Object[]{direction,VideoIp}, new OnReturnValue<String>() {
+            @Override
+            public void onValue(String retValue) {
+//                showToast(retValue);
+            }
+        });
+    }
+
+    private  void callWebXYZ(double x,double y,double z){
+        dWebView.callHandler("angleChange", new Object[]{x,y,z}, new OnReturnValue<String>() {
             @Override
             public void onValue(String retValue) {
 //                showToast(retValue);

@@ -1,6 +1,8 @@
 ﻿using GeneralDef;
 using NETSDKHelper;
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -54,6 +56,7 @@ namespace TranData.Driver
         public PTZControl()
         {
             Discovery("0.0.0.0", "0.0.0.0");
+            StartQueue().ConfigureAwait(false);
         }
 
         public void Init()
@@ -388,7 +391,7 @@ namespace TranData.Driver
                 NETDEV_DEVICE_INFO_S pstDevInfo = new NETDEV_DEVICE_INFO_S();
                 NETDEVSDK.NETDEV_GetDeviceInfo(deviceInfoTemp.m_lpDevHandle, ref pstDevInfo);
                 deviceInfoTemp.m_stDevInfo = pstDevInfo;
-                            
+
             }
 
 
@@ -409,6 +412,88 @@ namespace TranData.Driver
             }
             return true;
         }
+        ConcurrentQueue<float[]> Queue = new ConcurrentQueue<float[]>();
+
+        public void Enqueue(float x, float y, float z)
+        {
+            Queue.Enqueue(new float[3] { x, y, z });
+        }
+
+        private async Task StartQueue()
+        {
+            while (true)
+            {
+                if (Queue.Count > 0)
+                {
+                    float[] nowXYZ;
+                    if (Queue.TryDequeue(out nowXYZ))
+                    {
+                       await GoToXYZ(nowXYZ[0], nowXYZ[1], nowXYZ[2]);
+                    }
+                    else
+                    {
+                        await Task.Delay(100);
+                    }
+                }
+                else
+                {
+                    await Task.Delay(100);
+                }
+            }
+        }
+
+        private float xSpeed = 6.7F;//100ms转动角度
+        private float ySpeed = 3.91F;//100ms转动角度
+        private float[] lastXYZ = new float[3];
+        public async Task GoToXYZ(float x, float y, float z)
+        {
+            await GoToX(x);
+            await GoToY(y);
+            lastXYZ[0] = x;
+            lastXYZ[1] = y;
+            lastXYZ[2] = z;
+        }
+
+        public async Task GoToX(float x)
+        {
+            var diff = lastXYZ[0] - x;
+            if (diff >= 0)
+            {//向右
+                int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
+                await Task.Delay(s * 100);
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+            }
+            else
+            {
+                //向左
+                int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
+                await Task.Delay(s * 100);
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+            }
+        }
+
+        public async Task GoToY(float y)
+        {
+            var diff = lastXYZ[1] - y;
+            if (diff >= 0)
+            {//向上
+                int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
+                await Task.Delay(s * 100);
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+            }
+            else
+            {
+                //向下
+                int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
+                await Task.Delay(s * 100);
+                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+            }
+        }
+
 
         public bool ControlZoomWide()
         {
