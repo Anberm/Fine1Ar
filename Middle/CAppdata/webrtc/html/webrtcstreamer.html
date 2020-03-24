@@ -83,8 +83,8 @@
             }
             responseCallback("ok");
         });
-        dsBridge.registerAsyn('angleChange', function (x,y,z, responseCallback) {
-            send(x,y,z);
+        dsBridge.registerAsyn('angleChange', function (x, y, z, responseCallback) {
+            send(JSON.stringify({ Type: "Angle", X: x, Y: y, Z: z }));
             responseCallback("ok");
         });
         dsBridge.registerAsyn('onShake', function (shake, videoIp, responseCallback) {

@@ -1,4 +1,5 @@
 ﻿using NETSDKHelper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,6 +53,12 @@ namespace TranData
                         break;
                     default:
                         Console.WriteLine($"msg:{data}");
+                       var d= JsonConvert.DeserializeObject<Angle>(data);
+                        if(d.Type== "Angle")
+                        {
+                            TranData.Driver.PTZControl.Instance.Enqueue(d.X, d.Y, d.Z);
+                        }
+                  
                         break;
                 }
             }
@@ -62,5 +69,12 @@ namespace TranData
             }
           
         }
+    }
+    public class Angle
+    {
+        public string Type { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
     }
 }
