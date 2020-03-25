@@ -412,16 +412,15 @@ namespace TranData.Driver
             }
             return true;
         }
-        ConcurrentQueue<float[]> Queue = new ConcurrentQueue<float[]>();
+        ConcurrentQueue<int> Queue = new ConcurrentQueue<int>();
 
-        public void Enqueue(float x, float y, float z)
+        public void Enqueue(int orientation)
         {
-            var xyz = new float[3] { x, y, z }; 
-            if (lastXYZ == null)
+            if (lastOrientation == 0)
             {
-                lastXYZ = xyz;
+                lastOrientation = orientation;
             }
-            Queue.Enqueue(xyz);
+            Queue.Enqueue(orientation);
         }
 
         private async Task StartQueue()
@@ -430,10 +429,10 @@ namespace TranData.Driver
             {
                 if (Queue.Count > 0)
                 {
-                    float[] nowXYZ;
-                    if (Queue.TryDequeue(out nowXYZ))
+                    int nowOrientation;
+                    if (Queue.TryDequeue(out nowOrientation))
                     {
-                       await GoToXYZ(nowXYZ[0], nowXYZ[1], nowXYZ[2]);
+                        await GotoOrientation(nowOrientation);
                     }
                     else
                     {
@@ -449,59 +448,68 @@ namespace TranData.Driver
 
         private float xSpeed = 6.7F;//100ms转动角度
         private float ySpeed = 3.91F;//100ms转动角度
-        private float[] lastXYZ;
-        public async Task GoToXYZ(float x, float y, float z)
+        private int lastOrientation=0;
+        public async Task GotoOrientation(int orientation)
         {
-            await GoToX(x);
-            await GoToY(y);
-            lastXYZ[0] = x;
-            lastXYZ[1] = y;
-            lastXYZ[2] = z;
-        }
-
-        public async Task GoToX(float x)
-        {
-            var diff = lastXYZ[0] - x;
-            if (diff >= 0)
-            {//向右
-                int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
-                Console.WriteLine($"向右 {s * 100}ms  {diff}");
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
-                await Task.Delay(s * 100);
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
-            }
-            else
+            if (orientation != lastOrientation)
             {
-                //向左
-                int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
-                Console.WriteLine($"向左 {s * 100}ms  {diff}");
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
-                await Task.Delay(s * 100);
                 Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
             }
+            Control(orientation);
+            await Task.Delay(100);
         }
+        //public async Task GoToXYZ(float x, float y, float z)
+        //{
+        //    await GoToX(x);
+        //    await GoToY(y);
+        //    lastXYZ[0] = x;
+        //    lastXYZ[1] = y;
+        //    lastXYZ[2] = z;
+        //}
 
-        public async Task GoToY(float y)
-        {
-            var diff = lastXYZ[1] - y;
-            if (diff >= 0)
-            {//向上
-                int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
-                Console.WriteLine($"向上 {s * 100}ms  {diff}");
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
-                await Task.Delay(s * 100);
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
-            }
-            else
-            {
-                //向下
-                int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
-                Console.WriteLine($"向下 {s * 100}ms  {diff}");
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
-                await Task.Delay(s * 100);
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
-            }
-        }
+        //public async Task GoToX(float x)
+        //{
+        //    var diff = lastXYZ[0] - x;
+        //    if (diff > 10)
+        //    {//向右
+        //        int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+        //        Console.WriteLine($"向右 {s * 100}ms  {diff}");
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
+        //        await Task.Delay(s * 100);
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+        //    }
+        //    else if (diff < -10)
+        //    {
+        //        //向左
+        //        int s = (int)Math.Ceiling(Math.Abs(diff) / xSpeed);// 算出多少100ms
+        //        Console.WriteLine($"向左 {s * 100}ms  {diff}");
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
+        //        await Task.Delay(s * 100);
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+        //    }
+        //}
+
+        //public async Task GoToY(float y)
+        //{
+        //    var diff = lastXYZ[1] - y;
+        //    if (diff > 10)
+        //    {//向上
+        //        int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+        //        Console.WriteLine($"向上 {s * 100}ms  {diff}");
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
+        //        await Task.Delay(s * 100);
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+        //    }
+        //    else if (diff < -10)
+        //    {
+        //        //向下
+        //        int s = (int)Math.Ceiling(Math.Abs(diff) / ySpeed);// 算出多少100ms
+        //        Console.WriteLine($"向下 {s * 100}ms  {diff}");
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
+        //        await Task.Delay(s * 100);
+        //        Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+        //    }
+        //}
 
 
         public bool ControlZoomWide()

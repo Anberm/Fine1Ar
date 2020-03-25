@@ -19,7 +19,7 @@ class MotionDetector implements SensorEventListener {
     static final int UP_SWING = 2;
     static final int DOWN_SWING = 3;
 
-    private static final int DETECTION_INTERVAL = 200;     // 1000 ms
+    private static final int DETECTION_INTERVAL = 100;     // 1000 ms
     private static final float DETECTION_VALUE = 0.3f;      // 1.7 rad/s
 
 
@@ -75,70 +75,70 @@ class MotionDetector implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-//        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE&&false) {
-//            if (mListener != null) {
-//                if(oIsEnable){
-//                    if (mIsEnable) {
-//                        int direction = judgeDirection(event.values);
-//                        mListener.onMotion(direction);
-//                        mIsEnable = false;
-//                        startIntervalTimer();
-//                    }
-//                    mListener.onChanged(event.values[0], event.values[1], event.values[2]);
-//                    // 现在检测时间
-//                    long currentUpdateTime = System.currentTimeMillis();
-//                    // 两次检测的时间间隔
-//                    long timeInterval = currentUpdateTime - lastUpdateTime;
-//                    // 判断是否达到了检测时间间隔
-//                    if (timeInterval < UPTATE_INTERVAL_TIME) return;
-//                    // 现在的时间变成last时间
-//                    lastUpdateTime = currentUpdateTime;
-//                    // 获得x,y,z坐标
-//                    float x = event.values[0];
-//                    float y = event.values[1];
-//                    float z = event.values[2];
-//                    // 获得x,y,z的变化值
-//                    float deltaX = x - lastX;
-//                    float deltaY = y - lastY;
-//                    float deltaZ = z - lastZ;
-//                    // 将现在的坐标变成last坐标
-//                    lastX = x;
-//                    lastY = y;
-//                    lastZ = z;
-//                    double speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ
-//                            * deltaZ)
-//                            / timeInterval * 10000;
-//                    // 达到速度阀值，发出提示
-//                    Log.d(TAG,"速度："+speed);
-//                    if (speed >= SPEED_SHRESHOLD) {
-//                        oIsEnable=false;
-//                        Log.d(TAG,"速度 Shake："+speed);
-//                        mListener.onShake();
-//                        startOIntervalTimer();
-//                    }
-//                }
-//
-//
-//            }
-//        }
-
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            geomagnetic = event.values;
-        }
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             if (mListener != null) {
-                if (oIsEnable) {
+                if(oIsEnable){
                     if (mIsEnable) {
-                        gravity = event.values;
-                        double[] oris= getOritation();
-                        mListener.onAngleChanged(oris[0],oris[1],oris[2]);
+                        int direction = judgeDirection(event.values);
+                        mListener.onMotion(direction);
                         mIsEnable = false;
                         startIntervalTimer();
                     }
+                    mListener.onChanged(event.values[0], event.values[1], event.values[2]);
+                    // 现在检测时间
+                    long currentUpdateTime = System.currentTimeMillis();
+                    // 两次检测的时间间隔
+                    long timeInterval = currentUpdateTime - lastUpdateTime;
+                    // 判断是否达到了检测时间间隔
+                    if (timeInterval < UPTATE_INTERVAL_TIME) return;
+                    // 现在的时间变成last时间
+                    lastUpdateTime = currentUpdateTime;
+                    // 获得x,y,z坐标
+                    float x = event.values[0];
+                    float y = event.values[1];
+                    float z = event.values[2];
+                    // 获得x,y,z的变化值
+                    float deltaX = x - lastX;
+                    float deltaY = y - lastY;
+                    float deltaZ = z - lastZ;
+                    // 将现在的坐标变成last坐标
+                    lastX = x;
+                    lastY = y;
+                    lastZ = z;
+                    double speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ
+                            * deltaZ)
+                            / timeInterval * 10000;
+                    // 达到速度阀值，发出提示
+                    Log.d(TAG,"速度："+speed);
+                    if (speed >= SPEED_SHRESHOLD) {
+                        oIsEnable=false;
+                        Log.d(TAG,"速度 Shake："+speed);
+                        mListener.onShake();
+                        startOIntervalTimer();
+                    }
                 }
+
+
             }
         }
+
+//        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+//            geomagnetic = event.values;
+//        }
+//        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+//
+//            if (mListener != null) {
+//                if (oIsEnable) {
+//                    if (mIsEnable) {
+//                        gravity = event.values;
+//                        double[] oris= getOritation();
+//                        mListener.onAngleChanged(oris[0],oris[1],oris[2]);
+//                        mIsEnable = false;
+//                        startIntervalTimer();
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**

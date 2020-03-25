@@ -24,17 +24,21 @@ namespace TranData
                 switch (data)
                 {
                     case "Down":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
+                        TranData.Driver.PTZControl.Instance.Enqueue((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
+                        //TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTUP);
                         break;
                     case "Up":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
+                        TranData.Driver.PTZControl.Instance.Enqueue((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
+                        //TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_TILTDOWN);
                         break;
                     case "Left":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
+                        TranData.Driver.PTZControl.Instance.Enqueue((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
+                        //TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANRIGHT);
                         break;                
                 
                     case "Right":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
+                        TranData.Driver.PTZControl.Instance.Enqueue((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
+                        //TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_PANLEFT);
                         break;
                     case "ZoomIn":
                         TranData.Driver.PTZControl.Instance.ControlZoomTele();
@@ -46,7 +50,8 @@ namespace TranData
                         Send(TranData.Driver.PTZControl.Instance.VideoUrl);
                         break;
                     case "Stop":
-                        TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+                        TranData.Driver.PTZControl.Instance.Enqueue((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+                        //TranData.Driver.PTZControl.Instance.Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
                         break;
 
                     case "Origin":
@@ -55,27 +60,27 @@ namespace TranData
                     default:
                         Console.WriteLine($"msg:{data}");
      
-                        if ((data.StartsWith("{") && data.EndsWith("}")) || //For object
-                            (data.StartsWith("[") && data.EndsWith("]"))) //For array
-                        {
-                            try
-                            {
-                                var d = JsonConvert.DeserializeObject<Angle>(data);
-                                if (d.Type == "Angle")
-                                {
-                                    TranData.Driver.PTZControl.Instance.Enqueue(d.X, d.Y, d.Z);
-                                }
-                            }
-                            catch (JsonReaderException jex)
-                            {
-                                //Exception in parsing json
-                                Console.WriteLine(jex.Message);
-                            }
-                            catch (Exception ex) //some other exception
-                            {
-                                Console.WriteLine(ex.ToString());
-                            }
-                        }                     
+                        //if ((data.StartsWith("{") && data.EndsWith("}")) || //For object
+                        //    (data.StartsWith("[") && data.EndsWith("]"))) //For array
+                        //{
+                        //    try
+                        //    {
+                        //        var d = JsonConvert.DeserializeObject<Angle>(data);
+                        //        if (d.Type == "Angle")
+                        //        {
+                        //            TranData.Driver.PTZControl.Instance.Enqueue(d.X, d.Y, d.Z);
+                        //        }
+                        //    }
+                        //    catch (JsonReaderException jex)
+                        //    {
+                        //        //Exception in parsing json
+                        //        Console.WriteLine(jex.Message);
+                        //    }
+                        //    catch (Exception ex) //some other exception
+                        //    {
+                        //        Console.WriteLine(ex.ToString());
+                        //    }
+                        //}                     
                   
                         break;
                 }
