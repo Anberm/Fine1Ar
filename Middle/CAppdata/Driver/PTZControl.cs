@@ -416,10 +416,6 @@ namespace TranData.Driver
 
         public void Enqueue(int orientation)
         {
-            if (lastOrientation == 0)
-            {
-                lastOrientation = orientation;
-            }
             Queue.Enqueue(orientation);
         }
 
@@ -434,15 +430,16 @@ namespace TranData.Driver
                     {
                         await GotoOrientation(nowOrientation);
                     }
-                    else
-                    {
-                        await Task.Delay(100);
-                    }
+                    //else
+                    //{
+                    //    await Task.Delay(100);
+                    //}
                 }
-                else
-                {
-                    await Task.Delay(100);
-                }
+                //else
+                //{
+                //    await Task.Delay(100);
+                //}
+                await Task.Yield();
             }
         }
 
@@ -453,10 +450,18 @@ namespace TranData.Driver
         {
             if (orientation != lastOrientation)
             {
-                Control((int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP);
+                Control(orientation);
             }
-            Control(orientation);
-            await Task.Delay(100);
+            lastOrientation = orientation;
+            if(orientation== (int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP)
+            {
+                await Task.Yield();
+            }
+            else
+            {
+                await Task.Delay(200);
+            }    
+          
         }
         //public async Task GoToXYZ(float x, float y, float z)
         //{
