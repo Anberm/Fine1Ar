@@ -445,7 +445,7 @@ namespace TranData.Driver
 
         private float xSpeed = 6.7F;//100ms转动角度
         private float ySpeed = 3.91F;//100ms转动角度
-        private int lastOrientation=0;
+        private int lastOrientation = 0;
         public async Task GotoOrientation(int orientation)
         {
             if (orientation != lastOrientation)
@@ -453,15 +453,15 @@ namespace TranData.Driver
                 Control(orientation);
             }
             lastOrientation = orientation;
-            if(orientation== (int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP)
+            if (orientation == (int)NETDEV_PTZ_E.NETDEV_PTZ_ALLSTOP)
             {
                 await Task.Yield();
             }
             else
             {
                 await Task.Delay(200);
-            }    
-          
+            }
+
         }
         //public async Task GoToXYZ(float x, float y, float z)
         //{
