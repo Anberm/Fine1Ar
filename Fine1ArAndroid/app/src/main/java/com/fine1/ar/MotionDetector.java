@@ -170,7 +170,7 @@ class MotionDetector implements SensorEventListener {
     void startSensor() {
         if (!mIsStartSensor) {
             if (mSensorManager != null) {
-                Sensor gyro = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+                Sensor gyro = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
                 Sensor magneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
                 Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 if (gyro != null) {
